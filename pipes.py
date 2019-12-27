@@ -9,6 +9,10 @@ __all__ = 'Saver', 'Cacher', 'IO', 'Pipe'
 
 class IO(ABC):
     @staticmethod
+    def finalname(name):
+        return name
+
+    @staticmethod
     @abstractmethod
     def load(path: str):
         """
@@ -61,6 +65,7 @@ class Cacher:
         if self.path is None:
             return self.func(obj)
 
+        name = self.io.finalname(name)
         cached_file_path = os.path.join(self.path, name)
         if name not in filenames(self.path):
             obj = self.func(obj)
@@ -82,8 +87,7 @@ class Pipe:
         self.generator = generator
         self.transforms = transforms
         self.caching = caching
-        if rewrite:
-            self.clear_caches()
+        self.rewrite = rewrite
 
     def clear_caches(self):
         for trans in self.transforms:
@@ -105,5 +109,7 @@ class Pipe:
         return obj
 
     def __iter__(self):
+        if self.rewrite:
+            self.clear_caches()
         for obj, name in self.generator:
             yield self.process(obj, name), name
