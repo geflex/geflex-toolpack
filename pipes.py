@@ -107,5 +107,5 @@ class Pipe:
         return obj
 
     def __iter__(self):
-        for obj, name in iter(self.generator):
+        for obj, name in self.generator:
             yield self.process(obj, name), name

@@ -2,21 +2,27 @@ import os, shutil
 
 
 def filenames(path):
-    return (p for p in os.listdir(path) if os.path.isfile(p))
+    return (p for p in os.listdir(path) if os.path.isfile(os.path.join(path, p)))
 
 
 def dirnames(path):
-    return (p for p in os.listdir(path) if os.path.isdir(p))
+    return (p for p in os.listdir(path) if os.path.isdir(os.path.join(path, p)))
 
 
 def filepaths(path):
     """yields paths to the files in folder"""
-    return (os.path.join(path, name) for name in os.listdir(path) if os.path.isfile(name))
+    for name in os.listdir(path):
+        filepath = os.path.join(path, name)
+        if os.path.isfile(filepath):
+            yield filepath
 
 
 def dirpaths(path):
     """yields paths to the dirs in folder"""
-    return (os.path.join(path, name) for name in os.listdir(path) if os.path.isdir(name))
+    for name in os.listdir(path):
+        dirpath = os.path.join(path, name)
+        if os.path.isdir(dirpath):
+            yield dirpath
 
 
 def clrdir(path):
