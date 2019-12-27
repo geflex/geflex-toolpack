@@ -2,6 +2,10 @@ import os
 from abc import ABC, abstractmethod
 from typing import *
 from .filetools import filenames, clrdir
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 __all__ = 'Saver', 'Cacher', 'IO', 'Pipe'
@@ -70,8 +74,10 @@ class Cacher:
         if name not in filenames(self.path):
             obj = self.func(obj)
             self.io.save(obj, cached_file_path)
+            logger.info(f'{repr(name)} saved to cache {repr(self.path)}')
             return obj
         else:
+            logger.info(f'{repr(name)} loaded from cache {repr(self.path)}')
             return self.io.load(cached_file_path)
 
 
@@ -93,6 +99,7 @@ class Pipe:
         for trans in self.transforms:
             if isinstance(trans, (Saver, Cacher)):
                 clrdir(trans.path)
+                logger.info(f'cache {repr(trans.path)} was cleared')
 
     def process(self, obj, name):
         """process one object"""
