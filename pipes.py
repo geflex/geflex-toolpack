@@ -4,44 +4,7 @@ from typing import *
 from .filetools import filenames, clrdir
 
 
-class Saver:
-    def __init__(self, path, func):
-        self.path = path
-        self.save_func = func
-
-    def __call__(self, obj, name):
-        filepath = os.path.join(self.path, name)
-        self.save_func(obj, filepath)
-        return self
-
-
-class Cacher:
-    def __init__(self, func, io, path):
-        self.func = func
-        self.io = io
-        self.path = path
-
-    def __call__(self, obj, name):
-        """
-        transforms an object with .func and caches result
-        if result is already in cache returns it instead
-
-        :param obj: obj that should be transformed
-        :param name: name of the object that identifies it in cache
-        :return: transformed object
-
-        :type name: str
-        """
-        if self.path is None:
-            return self.func(obj)
-
-        cached_file_path = os.path.join(self.path, name)
-        if name not in filenames(self.path):
-            obj = self.func(obj)
-            self.io.save(obj, cached_file_path)
-            return obj
-        else:
-            return self.io.load(cached_file_path)
+__all__ = 'Saver', 'Cacher', 'IO', 'Pipe'
 
 
 class IO(ABC):
@@ -65,6 +28,46 @@ class IO(ABC):
         :type path: str
         """
         pass
+
+
+class Saver:
+    def __init__(self, path, func):
+        self.path = path
+        self.save_func = func
+
+    def __call__(self, obj, name):
+        filepath = os.path.join(self.path, name)
+        self.save_func(obj, filepath)
+        return self
+
+
+class Cacher:
+    def __init__(self, path, func, io):
+        self.path = path
+        self.func = func
+        self.io = io
+
+    def __call__(self, obj, name):
+        """
+        transforms an object with .func and caches result
+        if result is already in cache returns it instead
+
+        :param obj: obj that should be transformed
+        :param name: name of the object that identifies it in cache
+        :return: transformed object
+
+        :type name: str
+        """
+        if self.path is None:
+            return self.func(obj)
+
+        cached_file_path = os.path.join(self.path, name)
+        if name not in filenames(self.path):
+            obj = self.func(obj)
+            self.io.save(obj, cached_file_path)
+            return obj
+        else:
+            return self.io.load(cached_file_path)
 
 
 class Pipe:

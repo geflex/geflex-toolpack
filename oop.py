@@ -1,6 +1,9 @@
 from .core import *
 
 
+__all__ = 'Singleton', 'subclass'
+
+
 class Singleton:
     def __init__(self):
         attrname = '__instance__'

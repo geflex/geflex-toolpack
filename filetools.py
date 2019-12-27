@@ -1,28 +1,36 @@
 import os, shutil
 
 
+__all__ = 'filenames', 'dirnames', 'filepaths', 'dirpaths', 'clrdir', 'ext_split', 'get_ext'
+
+
+def _filt_pathnames(path, filt):
+    return (p for p in os.listdir(path) if filt(os.path.join(path, p)))
+
+
+def _filt_paths(path, filt):
+    for name in os.listdir(path):
+        filepath = os.path.join(path, name)
+        if filt(filepath):
+            yield filepath
+
+
 def filenames(path):
-    return (p for p in os.listdir(path) if os.path.isfile(os.path.join(path, p)))
+    return _filt_pathnames(path, os.path.isfile)
 
 
 def dirnames(path):
-    return (p for p in os.listdir(path) if os.path.isdir(os.path.join(path, p)))
+    return _filt_pathnames(path, os.path.isdir)
 
 
 def filepaths(path):
     """yields paths to the files in folder"""
-    for name in os.listdir(path):
-        filepath = os.path.join(path, name)
-        if os.path.isfile(filepath):
-            yield filepath
+    return _filt_paths(path, os.path.isfile)
 
 
 def dirpaths(path):
     """yields paths to the dirs in folder"""
-    for name in os.listdir(path):
-        dirpath = os.path.join(path, name)
-        if os.path.isdir(dirpath):
-            yield dirpath
+    return _filt_paths(path, os.path.isdir)
 
 
 def clrdir(path):
