@@ -15,19 +15,36 @@ class Saver:
         return self
 
 
-class CacheableCommand(ABC):
-    def __init__(self, path, func):
-        """
-
-        :param path: path to the cache dir
-        :type path: str
-        :param func: function that takes an object as only one argument,
-                     transforms it and returns new or this transformed object
-        :type func: Callable[[Any], Any]
-        """
-        self.path = path
+class Cacher:
+    def __init__(self, func, io, path):
         self.func = func
+        self.io = io
+        self.path = path
 
+    def __call__(self, obj, name):
+        """
+        transforms an object with .func and caches result
+        if result is already in cache returns it instead
+
+        :param obj: obj that should be transformed
+        :param name: name of the object that identifies it in cache
+        :return: transformed object
+
+        :type name: str
+        """
+        if self.path is None:
+            return self.func(obj)
+
+        cached_file_path = os.path.join(self.path, name)
+        if name not in filenames(self.path):
+            obj = self.func(obj)
+            self.io.save(obj, cached_file_path)
+            return obj
+        else:
+            return self.io.load(cached_file_path)
+
+
+class IO(ABC):
     @staticmethod
     @abstractmethod
     def load(path: str):
@@ -49,28 +66,6 @@ class CacheableCommand(ABC):
         """
         pass
 
-    def __call__(self, obj, name):
-        """
-        transforms an object with .func and caches result
-        if result is already in cache returns it instead
-
-        :param obj: obj thet should be transformed
-        :param name: name of the file (not the fiull path) that identifies it in cache
-        :return: transformed object
-
-        :type name: str
-        """
-        if self.path is None:
-            return self.func(obj)
-
-        cached_file_path = os.path.join(self.path, name)
-        if name not in filenames(self.path):
-            obj = self.func(obj)
-            self.save(obj, cached_file_path)
-            return obj
-        else:
-            return self.load(cached_file_path)
-
 
 class Pipe:
     def __init__(self, generator, *transforms, caching=True, rewrite=False):
@@ -89,13 +84,13 @@ class Pipe:
 
     def clear_caches(self):
         for trans in self.transforms:
-            if isinstance(trans, (Saver, CacheableCommand)):
+            if isinstance(trans, (Saver, Cacher)):
                 clrdir(trans.path)
 
     def process(self, obj, name):
         """process one object"""
         for trans in self.transforms:
-            if isinstance(trans, CacheableCommand):
+            if isinstance(trans, Cacher):
                 if self.caching:
                     obj = trans(obj, name)
                 else:
