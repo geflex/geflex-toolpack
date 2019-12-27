@@ -22,5 +22,5 @@ def list_diff(collection, *collections):
     return _uniques
 
 
-def list_intersect():
+def list_intersect(collection, *collections):
     pass
