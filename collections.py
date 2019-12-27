@@ -15,12 +15,16 @@ def uniques(collection, *collections):
 
 
 def list_diff(collection, *collections):
-    _uniques = []
+    items = []
     for obj in collection:
         if not contains(collections, obj):
-            _uniques.append(obj)
-    return _uniques
+            items.append(obj)
+    return items
 
 
 def list_intersect(collection, *collections):
-    pass
+    items = []
+    for obj in collection:
+        if contains(collections, obj):
+            items.append(obj)
+    return items
