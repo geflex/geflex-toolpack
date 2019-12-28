@@ -120,3 +120,7 @@ class Pipe:
             self.clear_caches()
         for obj, name in self.generator:
             yield self.process(obj, name), name
+
+    def iter(self):
+        for obj, name in self:
+            yield obj
