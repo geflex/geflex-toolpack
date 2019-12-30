@@ -33,6 +33,13 @@ def dirpaths(path):
     return _filt_paths(path, os.path.isdir)
 
 
+def reader(path, func):
+    for filename in filenames(path):
+        filepath = os.path.join(path, filename)
+        obj = func(filepath)
+        yield obj, filename
+
+
 def clrdir(path):
     """remove all files from the dir"""
     for name in os.listdir(path):
