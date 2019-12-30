@@ -1,7 +1,7 @@
 import os, shutil
 
 
-__all__ = 'filenames', 'dirnames', 'filepaths', 'dirpaths', 'clrdir', 'ext_split', 'get_ext'
+__all__ = 'filenames', 'dirnames', 'filepaths', 'dirpaths', 'reader', 'clrdir', 'ext_split', 'get_ext'
 
 
 def _filt_pathnames(path, filt):
