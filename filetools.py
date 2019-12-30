@@ -1,7 +1,35 @@
 import os, shutil
+from abc import ABC, abstractmethod
 
 
-__all__ = 'filenames', 'dirnames', 'filepaths', 'dirpaths', 'reader', 'clrdir', 'ext_split', 'get_ext'
+__all__ = 'filenames', 'dirnames', 'filepaths', 'dirpaths', 'reader', 'clrdir', 'ext_split', 'get_ext', 'IO'
+
+
+class IO(ABC):
+    @staticmethod
+    def finalname(name):
+        return name
+
+    @staticmethod
+    @abstractmethod
+    def load(path: str):
+        """
+        this method should load object from file and return it
+        :param path: full(or relative) path to the file
+        :return: loaded object
+        """
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def save(obj, path):
+        """
+        this method should dump object to the file
+        :param obj: object that should be saved
+        :param path: full(or relative) path to the file
+        :type path: str
+        """
+        pass
 
 
 def _filt_pathnames(path, filt):

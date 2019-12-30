@@ -8,45 +8,20 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-__all__ = 'Saver', 'Cacher', 'IO', 'Pipe'
-
-
-class IO(ABC):
-    @staticmethod
-    def finalname(name):
-        return name
-
-    @staticmethod
-    @abstractmethod
-    def load(path: str):
-        """
-        this method should load object from file and return it
-        :param path: full(or relative) path to the file
-        :return: loaded object
-        """
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def save(obj, path):
-        """
-        this method should dump object to the file
-        :param obj: object that should be saved
-        :param path: full(or relative) path to the file
-        :type path: str
-        """
-        pass
+__all__ = 'Saver', 'Cacher', 'Pipe'
 
 
 class Saver:
-    def __init__(self, path, func):
+    def __init__(self, path, func, clear=True):
         self.path = path
-        self.save_func = func
+        self.func = func
+        if clear:
+            clrdir(path)
 
     def __call__(self, obj, name):
         filepath = os.path.join(self.path, name)
-        self.save_func(obj, filepath)
-        return self
+        self.func(obj, filepath)
+        return obj
 
 
 class Cacher:
