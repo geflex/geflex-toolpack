@@ -1,8 +1,11 @@
-import os, shutil
+import os
+import shutil
+import io
+import pathlib
 from abc import ABC, abstractmethod
 
-
-__all__ = 'filenames', 'dirnames', 'filepaths', 'dirpaths', 'reader', 'clrdir', 'ext_split', 'get_ext', 'IO'
+__all__ = ('filenames', 'dirnames', 'filepaths', 'dirpaths',
+           'reader', 'clrdir', 'ext_split', 'get_ext', 'IO', 'file')
 
 
 class IO(ABC):
@@ -30,6 +33,14 @@ class IO(ABC):
         :type path: str
         """
         pass
+
+
+def file(f):
+    if isinstance(f, (str, bytes, pathlib.Path)):
+        return open(f)
+    if isinstance(f, io.TextIOWrapper):
+        return f
+    raise ValueError
 
 
 def _filt_pathnames(path, filt):
