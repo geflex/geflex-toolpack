@@ -27,3 +27,23 @@ class GList(list):
             if GList.contains(collections, obj):
                 items.append(obj)
         return items
+
+
+class GDotDict(dict):
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__getitem__
+    __getattr__ = dict.__getitem__
+
+
+class ArgsKwargs:
+    def __init__(self, *args, **kwargs):
+        self.args = list(args)
+        self.kwargs = kwargs
+
+    def extend(self, *args, **kwargs):
+        self.args.extend(args)
+        self.kwargs = {**self.kwargs, **kwargs}
+
+    def extended(self, *args, **kwargs):
+        return self.__class__(*self.args, *args,
+                              **self.kwargs, **kwargs)

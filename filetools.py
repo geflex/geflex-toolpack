@@ -5,7 +5,7 @@ import pathlib
 from abc import ABC, abstractmethod
 
 __all__ = ('filenames', 'dirnames', 'filepaths', 'dirpaths',
-           'reader', 'clrdir', 'ext_split', 'get_ext', 'IO', 'file')
+           'reader', 'clrdir', 'ext_split', 'get_ext', 'IO', 'fopen')
 
 
 class IO(ABC):
@@ -35,7 +35,7 @@ class IO(ABC):
         pass
 
 
-def file(f):
+def fopen(f):
     if isinstance(f, (str, bytes, pathlib.Path)):
         return open(f)
     if isinstance(f, io.TextIOWrapper):
